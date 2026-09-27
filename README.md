@@ -52,7 +52,7 @@ Você pode visualizar a aplicação rodando ao vivo através do link do GitHub P
 
 👉 https://seu-usuario.github.io/nome-do-repositorio/ (Substitua com a sua URL real)
 
-👨‍💻 Como Executar Localmente
+## 👨‍💻 Como Executar Localmente
 Se você deseja rodar este projeto na sua máquina para testes:
 
 Clone o repositório:
@@ -61,6 +61,8 @@ git clone [https://github.com/seu-usuario/nome-do-repositorio.git](https://githu
 ~~~
 Acesse a pasta do projeto:
 
-> cd nome-do-repositorio/portfolio-web
+~~~
+cd nome-do-repositorio/portfolio-web
+~~~
 
 Abra o arquivo index.html diretamente no seu navegador de preferência.
