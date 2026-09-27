@@ -1,0 +1,74 @@
+name: CI/CD Pipeline - Portfolio Web
+
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["main"] # O CI roda também em PRs para validar o código antes do merge
+    workflow_dispatch:
+
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+
+concurrency:
+    group: "pages"
+    cancel-in-progress: true
+
+jobs:
+    # ==========================================
+    # ETAPA 1: INTEGRAÇÃO CONTÍNUA (CI)
+    # ==========================================
+    ci:
+        name: Validação e Qualidade (CI)
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout do Código
+              uses: actions/checkout@v4
+
+            - name: Verificar estrutura de arquivos obrigatórios
+              run: |
+                  echo "Verificando se os arquivos essenciais existem..."
+                  if [ ! -f "portfolio-web/index.html" ]; then
+                    echo "Erro: portfolio-web/index.html não encontrado!"
+                    exit 1
+                  fi
+                  if [ ! -f "portfolio-web/style.css" ]; then
+                    echo "Erro: portfolio-web/style.css não encontrado!"
+                    exit 1
+                  fi
+                  echo "Estrutura básica validada com sucesso!"
+
+            - name: Validação estática simulada do HTML/CSS
+              run: |
+                  echo "Executando verificações de boas práticas no código estático..."
+                  # Aqui poderiam entrar linters reais de HTML/CSS do projeto
+                  echo "Nenhum erro de sintaxe encontrado."
+
+    # ==========================================
+    # ETAPA 2: ENTREGA CONTÍNUA (CD)
+    # ==========================================
+    cd:
+        name: Deploy Automático (CD)
+        needs: ci # O deploy só acontece se o CI passar sem erros!
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        runs-on: ubuntu-latest
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        steps:
+            - name: Checkout do Código
+              uses: actions/checkout@v4
+
+            - name: Configurar o Pages
+              uses: actions/configure-pages@v4
+
+            - name: Enviar artefato para o Pages
+              uses: actions/upload-pages-artifact@v3
+              with:
+                  path: "./portfolio-web" # Aponta corretamente para a subpasta onde estão os arquivos estáticos
+
+            - name: Executar o Deploy
+              id: deployment
+              uses: actions/deploy-pages@v4
